@@ -1,0 +1,101 @@
+.game-controls {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.control-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  text-transform: none;
+}
+
+.control-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.control-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.control-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.control-button.secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.control-button.warning {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #8B4513;
+}
+
+.control-button.info {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #2C5364;
+}
+
+.control-button.success {
+  background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+  color: #2E7D32;
+}
+
+.control-button.celebration {
+  animation: celebrate 2s ease-in-out infinite;
+}
+
+@keyframes celebrate {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-controls {
+    gap: 10px;
+  }
+  
+  .control-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-controls {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .control-button {
+    width: 200px;
+    max-width: 90%;
+  }
+}

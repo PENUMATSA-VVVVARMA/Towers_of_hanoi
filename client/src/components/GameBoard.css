@@ -1,0 +1,138 @@
+.game-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-description {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.game-message {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  animation: fadeInOut 0.3s ease-in;
+}
+
+.game-message.success {
+  background-color: rgba(76, 175, 80, 0.8);
+  border: 1px solid #4CAF50;
+}
+
+.game-message.error {
+  background-color: rgba(244, 67, 54, 0.8);
+  border: 1px solid #F44336;
+}
+
+@keyframes fadeInOut {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.towers-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.hint-container {
+  margin: 20px 0;
+  animation: slideIn 0.5s ease-out;
+}
+
+.hint-message {
+  background: rgba(255, 193, 7, 0.9);
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid #FFC107;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.game-rules {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.game-rules h4 {
+  margin: 0 0 10px 0;
+  color: #FFF;
+}
+
+.game-rules ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.game-rules li {
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-board {
+    padding: 15px;
+  }
+  
+  .game-header h2 {
+    font-size: 24px;
+  }
+  
+  .towers-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .game-rules {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .towers-container {
+    padding: 10px;
+  }
+  
+  .game-message {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+}

@@ -1,0 +1,132 @@
+.tower-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 20px;
+}
+
+.tower-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.tower {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.tower:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tower.selected {
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 2px solid #4CAF50;
+}
+
+.tower.clickable:hover {
+  transform: translateY(-2px);
+}
+
+.tower-pole {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  width: 8px;
+  height: 250px;
+  background: linear-gradient(to bottom, #8B4513, #A0522D);
+  transform: translateX(-50%);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tower-base {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 180px;
+  height: 15px;
+  background: linear-gradient(to bottom, #654321, #8B4513);
+  transform: translateX(-50%);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.disks-container {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.disk {
+  position: absolute;
+  height: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.disk.highlighted {
+  animation: glow 1s ease-in-out infinite alternate;
+  transform: translateX(-50%) translateY(-5px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(76, 175, 80, 0.6);
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      0 0 15px rgba(76, 175, 80, 0.6);
+  }
+  to {
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      0 0 25px rgba(76, 175, 80, 0.9);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .tower-container {
+    margin: 0 10px;
+  }
+  
+  .tower {
+    width: 150px;
+    height: 250px;
+  }
+  
+  .tower-pole {
+    height: 200px;
+  }
+  
+  .tower-base {
+    width: 130px;
+  }
+  
+  .disk {
+    height: 18px;
+    font-size: 12px;
+  }
+}
