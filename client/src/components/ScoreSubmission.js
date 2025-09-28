@@ -46,6 +46,16 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       // Save name for future use
       localStorage.setItem('playerName', playerName.trim());
       
+      // Also save score locally as backup
+      const localScores = JSON.parse(localStorage.getItem('offlineScores') || '[]');
+      localScores.push({
+        ...scoreData,
+        score,
+        submittedAt: new Date().toISOString(),
+        synced: false
+      });
+      localStorage.setItem('offlineScores', JSON.stringify(localScores));
+      
       setSuccess(true);
       setTimeout(() => {
         if (onSubmitted) {
@@ -59,15 +69,38 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       console.error('Score submission error:', err); // Debug log
       let errorMessage = 'Failed to submit score. Please try again.';
       
-      if (err.message.includes('Server is not reachable')) {
+      if (err.message.includes('Backend service appears to be unavailable')) {
+        errorMessage = '🚫 Backend service unavailable\n\n💡 Your game progress is saved! You can:\n• Skip and continue playing\n• Try submitting again later\n• Check if you\'re online';
+      } else if (err.message.includes('Server is not reachable')) {
         errorMessage = 'Cannot connect to server. You can still skip to continue.';
-      } else if (err.message.includes('Failed to fetch')) {
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('Network error')) {
         errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message.includes('API endpoint not found')) {
+        errorMessage = '⚠️ Backend not deployed\n\nThe game backend needs to be deployed to Render.\nYou can skip for now and play offline!';
       } else if (err.message) {
         errorMessage = err.message;
       }
       
       setError(errorMessage);
+      
+      // Save score locally even if online submission failed
+      try {
+        const localScores = JSON.parse(localStorage.getItem('offlineScores') || '[]');
+        const scoreEntry = {
+          playerName: playerName.trim(),
+          level: gameResult.level,
+          moves: gameResult.moves,
+          timeInSeconds: gameResult.timeInSeconds,
+          score: gameResult.score,
+          submittedAt: new Date().toISOString(),
+          synced: false
+        };
+        localScores.push(scoreEntry);
+        localStorage.setItem('offlineScores', JSON.stringify(localScores));
+        console.log('Score saved offline:', scoreEntry);
+      } catch (localSaveError) {
+        console.error('Failed to save score offline:', localSaveError);
+      }
     } finally {
       setIsSubmitting(false);
     }
