@@ -50,7 +50,7 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       const localScores = JSON.parse(localStorage.getItem('offlineScores') || '[]');
       localScores.push({
         ...scoreData,
-        score,
+        score: gameResult.score,
         submittedAt: new Date().toISOString(),
         synced: false
       });
