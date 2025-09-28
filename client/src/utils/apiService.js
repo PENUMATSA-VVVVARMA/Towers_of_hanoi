@@ -1,5 +1,6 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 console.log('API Base URL:', API_BASE_URL); // Debug log
+console.log('Environment:', process.env.NODE_ENV); // Debug log
 
 class ApiService {
   // Submit a new score
@@ -21,11 +22,23 @@ class ApiService {
 
       if (!response.ok) {
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        
+        // Specific handling for common production deployment issues
+        if (response.status === 404) {
+          errorMessage = `API endpoint not found. Please check if your backend service is deployed and the API URL is correct.\nCurrent API URL: ${API_BASE_URL}`;
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please check if your backend service is running properly.';
+        } else if (response.status === 0 || response.status >= 500) {
+          errorMessage = `Cannot connect to server. Please verify:\n1. Backend service is deployed and running\n2. API URL is correct: ${API_BASE_URL}\n3. CORS is configured properly`;
+        }
+        
         try {
           const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
         } catch (parseError) {
-          // If we can't parse the error response, use the status text
+          // If we can't parse the error response, use our custom message
           console.warn('Could not parse error response:', parseError);
         }
         throw new Error(errorMessage);
