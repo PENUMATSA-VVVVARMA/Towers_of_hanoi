@@ -48,7 +48,11 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       
       setSuccess(true);
       setTimeout(() => {
-        onSubmitted && onSubmitted();
+        if (onSubmitted) {
+          onSubmitted();
+        } else {
+          onClose(); // Fallback to close if onSubmitted is not provided
+        }
       }, 2000);
       
     } catch (err) {

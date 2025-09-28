@@ -4,7 +4,11 @@ class ApiService {
   // Submit a new score
   static async submitScore(scoreData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/scores`, {
+      const submitUrl = `${API_BASE_URL}/scores`;
+      console.log('Submitting score to URL:', submitUrl); // Debug log
+      console.log('Score data:', scoreData); // Debug log
+      
+      const response = await fetch(submitUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -12,12 +16,23 @@ class ApiService {
         body: JSON.stringify(scoreData),
       });
 
+      console.log('Submit response:', response.status, response.statusText); // Debug log
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to submit score');
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (parseError) {
+          // If we can't parse the error response, use the status text
+          console.warn('Could not parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
 
-      return await response.json();
+      const result = await response.json();
+      console.log('Submit successful:', result); // Debug log
+      return result;
     } catch (error) {
       console.error('Error submitting score:', error);
       throw error;
@@ -79,8 +94,9 @@ class ApiService {
   // Test server connection
   static async testConnection() {
     try {
-      // Try the health endpoint
-      const healthUrl = `${API_BASE_URL}/health`.replace('/api/api/', '/api/');
+      // Construct health endpoint URL correctly
+      const baseUrl = API_BASE_URL.replace('/api', ''); // Remove /api from base URL
+      const healthUrl = `${baseUrl}/api/health`;
       console.log('Testing connection to:', healthUrl); // Debug log
       
       const response = await fetch(healthUrl, {
@@ -90,7 +106,7 @@ class ApiService {
         },
       });
       
-      console.log('Health check response:', response.status); // Debug log
+      console.log('Health check response:', response.status, response.statusText); // Debug log
       return response.ok;
     } catch (error) {
       console.error('Server connection test failed:', error);
