@@ -9,9 +9,15 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Prevent double submissions
+    if (isSubmitting || success || isClosing) {
+      return;
+    }
     
     if (!playerName.trim()) {
       setError('Please enter your name');
@@ -57,13 +63,16 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       localStorage.setItem('offlineScores', JSON.stringify(localScores));
       
       setSuccess(true);
+      setIsClosing(true);
+      
+      // Shorter success display, then close
       setTimeout(() => {
         if (onSubmitted) {
           onSubmitted();
         } else {
-          onClose(); // Fallback to close if onSubmitted is not provided
+          onClose();
         }
-      }, 2000);
+      }, 1500);
       
     } catch (err) {
       console.error('Score submission error:', err); // Debug log

@@ -36,12 +36,17 @@ function App() {
   };
 
   const handleGameComplete = (result) => {
+    // Prevent showing modal if it's already shown or if no result
+    if (showScoreSubmission || !result) return;
+    
     setGameResult(result);
     setShowScoreSubmission(true);
   };
 
   const handleScoreSubmitted = () => {
+    // Ensure modal is fully closed and states are reset
     setShowScoreSubmission(false);
+    setGameResult(null); // Clear game result to prevent re-showing
     setCurrentView('leaderboard');
   };
 
@@ -53,7 +58,9 @@ function App() {
   };
 
   const handleScoreSubmissionClose = () => {
+    // Immediately hide modal and reset states
     setShowScoreSubmission(false);
+    setGameResult(null); // Clear game result to prevent re-showing
     // Go back to menu instead of staying on the same page
     handleBackToMenu();
   };

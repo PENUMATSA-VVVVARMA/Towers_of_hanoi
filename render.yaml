@@ -1,0 +1,26 @@
+services:
+  # Backend API Service
+  - type: web
+    name: towers-of-hanoi-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://pvvvvarma_db_user:QSp9Znc4lPzXVSDT@cluster0.94ss60r.mongodb.net/towers_of_hanoi
+      - key: FRONTEND_URL
+        value: https://towers-of-hanoi-staticsite.onrender.com
+
+  # Frontend Static Site (already deployed)
+  - type: web
+    name: towers-of-hanoi-frontend
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/build
+    plan: free
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://towers-of-hanoi-backend.onrender.com/api
