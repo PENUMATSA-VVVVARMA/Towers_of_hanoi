@@ -27,6 +27,12 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
     setError('');
 
     try {
+      // First check if server is reachable
+      const serverConnected = await ApiService.testConnection();
+      if (!serverConnected) {
+        throw new Error('Server is not reachable. Please check your connection or try again later.');
+      }
+
       const scoreData = {
         playerName: playerName.trim(),
         level: gameResult.level,
@@ -34,6 +40,7 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
         timeInSeconds: gameResult.timeInSeconds,
       };
 
+      console.log('Submitting score:', scoreData); // Debug log
       await ApiService.submitScore(scoreData);
       
       // Save name for future use
@@ -42,11 +49,21 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       setSuccess(true);
       setTimeout(() => {
         onSubmitted && onSubmitted();
-        onClose();
       }, 2000);
       
     } catch (err) {
-      setError(err.message || 'Failed to submit score. Please try again.');
+      console.error('Score submission error:', err); // Debug log
+      let errorMessage = 'Failed to submit score. Please try again.';
+      
+      if (err.message.includes('Server is not reachable')) {
+        errorMessage = 'Cannot connect to server. You can still skip to continue.';
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -135,6 +152,11 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
           {error && (
             <div className="error-message">
               {error}
+              {error.includes('Cannot connect to server') && (
+                <div style={{ marginTop: '10px', fontSize: '14px' }}>
+                  💡 Your game progress is saved locally. You can play offline!
+                </div>
+              )}
             </div>
           )}
 
@@ -145,7 +167,7 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Skip
+              {error.includes('Cannot connect to server') ? 'Continue to Menu' : 'Skip'}
             </button>
             <button 
               type="submit" 

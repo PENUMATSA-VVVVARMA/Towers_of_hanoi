@@ -79,7 +79,18 @@ class ApiService {
   // Test server connection
   static async testConnection() {
     try {
-      const response = await fetch(`${API_BASE_URL.replace('/api', '')}/api/health`);
+      // Try the health endpoint
+      const healthUrl = `${API_BASE_URL}/health`.replace('/api/api/', '/api/');
+      console.log('Testing connection to:', healthUrl); // Debug log
+      
+      const response = await fetch(healthUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('Health check response:', response.status); // Debug log
       return response.ok;
     } catch (error) {
       console.error('Server connection test failed:', error);

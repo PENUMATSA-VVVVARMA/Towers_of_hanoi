@@ -49,6 +49,12 @@ function App() {
     setShowScoreSubmission(false);
   };
 
+  const handleScoreSubmissionClose = () => {
+    setShowScoreSubmission(false);
+    // Go back to menu instead of staying on the same page
+    handleBackToMenu();
+  };
+
   const renderMenu = () => (
     <div className="app-container">
       <div className="menu-container">
@@ -161,7 +167,7 @@ function App() {
       {showScoreSubmission && gameResult && (
         <ScoreSubmission
           gameResult={gameResult}
-          onClose={() => setShowScoreSubmission(false)}
+          onClose={handleScoreSubmissionClose}
           onSubmitted={handleScoreSubmitted}
         />
       )}
