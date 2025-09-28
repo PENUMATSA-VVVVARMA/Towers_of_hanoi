@@ -104,7 +104,13 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       <div className="score-submission-modal">
         <div className="modal-header">
           <h2>🏆 Submit Your Score</h2>
-          <button className="close-button" onClick={onClose}>
+          <button className="close-button" onClick={() => {
+            // Reset all states and close immediately
+            setError('');
+            setSuccess(false);
+            setIsSubmitting(false);
+            onClose();
+          }}>
             ✖
           </button>
         </div>
@@ -168,10 +174,17 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
             <button 
               type="button" 
               className="cancel-button"
-              onClick={onClose}
+              onClick={() => {
+                // Reset all states and close immediately
+                setError('');
+                setSuccess(false);
+                setIsSubmitting(false);
+                setPlayerName('');
+                onClose();
+              }}
               disabled={isSubmitting}
             >
-              {error.includes('Cannot connect to server') ? 'Continue to Menu' : 'Skip'}
+              {error.includes('Cannot connect to server') ? 'Continue to Menu' : 'Skip & Return to Menu'}
             </button>
             <button 
               type="submit" 

@@ -20,9 +20,12 @@ function App() {
 
   const checkServerConnection = async () => {
     try {
+      console.log('Checking server connection...');
       const connected = await ApiService.testConnection();
+      console.log('Server connection result:', connected);
       setServerConnected(connected);
     } catch (error) {
+      console.error('Server connection check failed:', error);
       setServerConnected(false);
     }
   };

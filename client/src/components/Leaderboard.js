@@ -17,13 +17,31 @@ const Leaderboard = ({ onClose }) => {
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
+      // Check server connection first
+      const serverConnected = await ApiService.testConnection();
+      if (!serverConnected) {
+        throw new Error('Server is not available. Please check your connection.');
+      }
+
       const level = selectedLevel === 'all' ? null : parseInt(selectedLevel);
+      console.log('Fetching leaderboard for level:', level);
       const data = await ApiService.getLeaderboard(level, 20);
       setLeaderboardData(data);
-      setError(null);
     } catch (err) {
-      setError('Failed to load leaderboard. Please try again.');
       console.error('Leaderboard fetch error:', err);
+      let errorMessage = 'Failed to load leaderboard. Please try again.';
+      
+      if (err.message.includes('Server is not available')) {
+        errorMessage = 'Cannot connect to server. Please check if the server is running.';
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

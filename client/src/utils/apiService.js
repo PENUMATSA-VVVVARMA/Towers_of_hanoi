@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+console.log('API Base URL:', API_BASE_URL); // Debug log
 
 class ApiService {
   // Submit a new score
@@ -45,14 +46,20 @@ class ApiService {
       const url = level 
         ? `${API_BASE_URL}/scores/leaderboard/${level}?limit=${limit}`
         : `${API_BASE_URL}/scores/leaderboard?limit=${limit}`;
-        
+      
+      console.log('Fetching leaderboard from URL:', url); // Debug log
       const response = await fetch(url);
+      console.log('Leaderboard response:', response.status, response.statusText); // Debug log
 
       if (!response.ok) {
-        throw new Error('Failed to fetch leaderboard');
+        const errorText = await response.text();
+        console.error('Leaderboard error response:', errorText);
+        throw new Error(`Failed to fetch leaderboard: ${response.status} ${response.statusText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      console.log('Leaderboard data:', data); // Debug log
+      return data;
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
       throw error;
