@@ -76,14 +76,20 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
       
     } catch (err) {
       console.error('Score submission error:', err); // Debug log
+      
+      // Detect mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       let errorMessage = 'Failed to submit score. Please try again.';
       
       if (err.message.includes('Backend service appears to be unavailable')) {
         errorMessage = '🚫 Backend service unavailable\n\n💡 Your game progress is saved! You can:\n• Skip and continue playing\n• Try submitting again later\n• Check if you\'re online';
       } else if (err.message.includes('Server is not reachable')) {
         errorMessage = 'Cannot connect to server. You can still skip to continue.';
-      } else if (err.message.includes('Failed to fetch') || err.message.includes('Network error')) {
-        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('Network error') || err.name === 'AbortError') {
+        errorMessage = isMobile 
+          ? '📱 Network timeout. Please check your mobile data or WiFi connection and try again.'
+          : 'Network error. Please check your internet connection.';
       } else if (err.message.includes('API endpoint not found')) {
         errorMessage = '⚠️ Backend not deployed\n\nThe game backend needs to be deployed to Render.\nYou can skip for now and play offline!';
       } else if (err.message) {

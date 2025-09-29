@@ -1,16 +1,26 @@
-// Try multiple possible backend URLs
+// Detect if we're in production or mobile environment
+const isProduction = process.env.NODE_ENV === 'production' || 
+  window.location.protocol === 'https:' ||
+  !window.location.hostname.includes('localhost');
+
+// Try multiple possible backend URLs (filter localhost for production/mobile)
 const POSSIBLE_API_URLS = [
   process.env.REACT_APP_API_URL,
   'https://towers-of-hanoi-api.onrender.com/api',
   'https://towers-hanoi-server.onrender.com/api', 
   'https://hanoi-backend.onrender.com/api',
-  'http://localhost:5000/api'
+  // Only include localhost if we're in development
+  ...(!isProduction ? ['http://localhost:5000/api'] : [])
 ].filter(Boolean);
 
-let API_BASE_URL = POSSIBLE_API_URLS[0] || 'http://localhost:5000/api';
-console.log('Trying API URLs:', POSSIBLE_API_URLS);
+let API_BASE_URL = POSSIBLE_API_URLS[0] || 'https://towers-of-hanoi-api.onrender.com/api';
+console.log('Environment detection:', { 
+  isProduction, 
+  hostname: window.location.hostname,
+  protocol: window.location.protocol 
+});
+console.log('Available API URLs for this environment:', POSSIBLE_API_URLS);
 console.log('Primary API URL:', API_BASE_URL);
-console.log('Environment:', process.env.NODE_ENV);
 
 class ApiService {
   // Submit a new score with fallback URL attempts
@@ -32,6 +42,8 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(scoreData),
+          // Add timeout for mobile networks
+          signal: AbortSignal.timeout(15000) // 15 second timeout
         });
 
         console.log('Submit response:', response.status, response.statusText);
@@ -53,7 +65,8 @@ class ApiService {
     }
     
     // All attempts failed
-    const errorMessage = `Unable to submit score. Backend service appears to be unavailable.\n\n🔧 Possible solutions:\n1. Check if backend is deployed on Render\n2. Verify backend service isn't sleeping\n3. Try again in a few seconds\n\nTechnical details: ${lastError?.message || 'All connection attempts failed'}`;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const errorMessage = `Unable to submit score. Backend service appears to be unavailable.\n\n🔧 Possible solutions:\n${isMobile ? '📱 Mobile: Check your mobile data/WiFi connection\n' : ''}1. Check if backend is deployed on Render\n2. Verify backend service isn't sleeping\n3. Try again in a few seconds\n\nTechnical details: ${lastError?.message || 'All connection attempts failed'}`;
     throw new Error(errorMessage);
   }
 
@@ -71,7 +84,10 @@ class ApiService {
           : `${apiUrl}/scores/leaderboard?limit=${limit}`;
         
         console.log('Attempting to fetch leaderboard from:', url);
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          // Add timeout for mobile networks
+          signal: AbortSignal.timeout(15000) // 15 second timeout
+        });
         console.log('Leaderboard response:', response.status, response.statusText);
 
         if (response.ok) {
@@ -138,7 +154,8 @@ class ApiService {
           headers: {
             'Content-Type': 'application/json',
           },
-          timeout: 10000 // 10 second timeout
+          // Add timeout for mobile networks
+          signal: AbortSignal.timeout(10000) // 10 second timeout
         });
         
         console.log(`Attempt ${i + 1} response:`, response.status, response.statusText);

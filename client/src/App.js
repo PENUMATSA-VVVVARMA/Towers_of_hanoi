@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import GameBoard from './components/GameBoard';
 import Leaderboard from './components/Leaderboard';
 import ScoreSubmission from './components/ScoreSubmission';
+import MobileDebugInfo from './components/MobileDebugInfo';
 import ApiService from './utils/apiService';
 import { GAME_CONFIG } from './utils/gameLogic';
 import './App.css';
@@ -160,6 +161,8 @@ function App() {
 
   return (
     <div className="App">
+      <MobileDebugInfo />
+      
       {currentView === 'menu' && renderMenu()}
       
       {currentView === 'game' && (

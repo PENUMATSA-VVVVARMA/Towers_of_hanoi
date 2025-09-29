@@ -31,12 +31,20 @@ const Leaderboard = ({ onClose }) => {
       setLeaderboardData(data);
     } catch (err) {
       console.error('Leaderboard fetch error:', err);
+      
+      // Detect mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       let errorMessage = 'Failed to load leaderboard. Please try again.';
       
       if (err.message.includes('Server is not available')) {
         errorMessage = 'Cannot connect to server. Please check if the server is running.';
-      } else if (err.message.includes('Failed to fetch')) {
-        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (err.message.includes('Failed to fetch') || err.name === 'AbortError') {
+        errorMessage = isMobile 
+          ? '📱 Network timeout. Please check your mobile data or WiFi connection and try again.'
+          : 'Network error. Please check your internet connection.';
+      } else if (err.message.includes('Backend service unavailable')) {
+        errorMessage = '🚫 Backend service unavailable. The leaderboard requires an active server connection.';
       } else if (err.message) {
         errorMessage = err.message;
       }
