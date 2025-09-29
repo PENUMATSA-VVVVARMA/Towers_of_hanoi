@@ -208,7 +208,11 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
           </div>
 
           {error && (
-            <div className="error-message">
+            <div className="error-message" style={{
+              whiteSpace: 'pre-line',
+              lineHeight: '1.4',
+              fontSize: '14px'
+            }}>
               {error}
               {error.includes('Cannot connect to server') && (
                 <div style={{ marginTop: '10px', fontSize: '14px' }}>
@@ -231,28 +235,42 @@ const ScoreSubmission = ({ gameResult, onClose, onSubmitted }) => {
                 onClose();
               }}
               disabled={isSubmitting}
+              style={{ 
+                width: error.includes('Backend service unavailable') ? '100%' : '48%' 
+              }}
             >
-              {error.includes('Cannot connect to server') ? 'Continue to Menu' : 'Skip & Return to Menu'}
+              {error.includes('Cannot connect to server') || error.includes('Backend service unavailable') 
+                ? 'Continue Playing Offline' 
+                : 'Skip & Return to Menu'}
             </button>
-            <button 
-              type="submit" 
-              className="submit-button"
-              disabled={isSubmitting || !playerName.trim()}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="loading-spinner"></div>
-                  Submitting...
-                </>
-              ) : (
-                'Submit Score'
-              )}
-            </button>
+            
+            {/* Only show submit button if no backend error */}
+            {!error.includes('Backend service unavailable') && (
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isSubmitting || !playerName.trim()}
+                style={{ width: '48%' }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="loading-spinner"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Score'
+                )}
+              </button>
+            )}
           </div>
         </form>
 
         <div className="submission-note">
-          <p>🌟 Submit your score to compete with players worldwide!</p>
+          {error.includes('Backend service unavailable') ? (
+            <p>📱 Playing in offline mode! Your score is saved locally and you can continue enjoying the game.</p>
+          ) : (
+            <p>🌟 Submit your score to compete with players worldwide!</p>
+          )}
         </div>
       </div>
     </div>
